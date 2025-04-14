@@ -1,0 +1,33 @@
+name: "analytics"
+version: "1.0.0"
+config-version: 2
+
+profile: "analytics"
+
+model-paths: ["analytics/models"]  # Path to models directory
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# 👇 ADD THIS BLOCK HERE
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['analytics', 'dbt']
+
+models:
+  analytics:
+    core:
+      +materialized: table
+
+    sources:
+      +materialized: table
+
+    reporting:
+      +materialized: view

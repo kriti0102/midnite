@@ -1,3 +1,14 @@
 version: 2
-# models:
-# - name: <INSERT YOUR MODEL HERE>
+
+models:
+  - name: user_betting_summary
+    description: "Aggregated betting metrics per user per day"
+
+  - name: game_performance_summary
+    description: "Daily metrics per game including wagers and payouts"
+
+  - name: daily_revenue
+    description: "Daily revenue calculation (wagers - payouts)"
+    columns:
+      - name: revenue_usd
+        description: "Company revenue in USD"

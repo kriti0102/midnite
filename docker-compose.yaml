@@ -1,18 +1,26 @@
+version: '3.8'
+
 services:
   core:
     build:
       dockerfile: ./Dockerfile
     tty: true
     volumes:
-      - "${PWD}/src:/opt/src/"
+      - "${PWD}/src:/opt/src/"  # Mount the src directory to /opt/src in the container
+      - "${PWD}/.dbt:/root/.dbt"  # Mount the .dbt directory to the container
+    environment:
+      - DBT_PROFILES_DIR=/root/.dbt  # Set the environment variable for dbt profiles
     depends_on:
       - postgres
+    networks:
+      - db_network  # Ensure this service is part of the db_network
+
   postgres:
     image: postgres:11
     restart: unless-stopped
     volumes:
-       - "${PWD}/db-data:/var/lib/postgresql/data"
-       - "./init_scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql"
+      - "${PWD}/db-data:/var/lib/postgresql/data"
+      - "./init_scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql"
     ports:
       - "54322:5432"
     healthcheck:
@@ -23,3 +31,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    networks:
+      - db_network  # Ensure this service is part of the db_network
+
+networks:
+  db_network:
+    driver: bridge  # Ensures that both services are part of the same bridge network

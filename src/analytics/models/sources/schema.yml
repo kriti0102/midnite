@@ -5,8 +5,104 @@ sources:
     schema: raw
     tables:
       - name: users
+        description: "Table containing user information including name, ID, and account creation details"
+        columns:
+          - name: id
+            description: "Unique ID of the user"
+            tests:
+              - unique
+              - not_null
+          - name: CurrencyCode
+            description: "Only EUR or GBP"
+            quote: true
+            tests:
+              - accepted_values:
+                  values: ['EUR', 'GBP']
       - name: user_address
+        description: "Table containing user address and country information"
+        columns:
+          - name: user_id
+            description: "Unique ID of the user (foreign key to users)"
+            tests:
+              - not_null
+          - name: country_code
+            description: "ISO country code for the user's location (either IE or GB)"
+            tests:
+              - not_null
       - name: bet
+        description: "Table of bets placed by users, including wager, outcome, and game ID"
+        columns:
+          - name: id
+            description: "Unique ID of the bet"
+            tests:
+              - unique
+              - not_null
+          - name: user_id
+            description: "User who placed the bet"
+            tests:
+              - not_null
+          - name: bet_outcome_id
+            description: "ID referencing the bet outcome (e.g. win, loss, draw)"
+          - name: game_id
+            description: "ID referencing the game being bet on"
+            tests:
+              - not_null
+          - name: wager
+            description: "Amount wagered by the user"
+            tests:
+              - not_null
+          - name: winnings
+            description: "Winnings paid out after the bet is settled"
       - name: bet_outcome
+        description: "Table of possible outcomes for bets (win, loss, draw)"
+        columns:
+          - name: id
+            description: "Unique ID of the bet outcome"
+            tests:
+              - unique
+              - not_null
+          - name: outcome
+            description: "The name of the outcome (win, loss, draw)"
+            tests:
+              - not_null
       - name: game
+        description: "Table of games available for betting, including the vertical"
+        columns:
+          - name: id
+            description: "Unique ID of the game"
+            tests:
+              - unique
+              - not_null
+          - name: name
+            description: "The name of the game (e.g. Football, Tennis)"
+            tests:
+              - not_null
       - name: fx_rates
+        description: "Exchange rates used to convert local currency to USD"
+        columns:
+          - name: date
+            description: "The date of the exchange rate"
+            tests:
+              - not_null
+          - name: currency_code
+            description: "Currency code (either EUR or GBP)"
+            tests:
+              - not_null
+          - name: rate
+            description: "The exchange rate to convert the currency to USD"
+            tests:
+              - not_null
+
+models:
+  - name: staging_bets
+    description: "This model aggregates the raw bets data and prepares it for downstream analytics."
+    columns:
+      - name: bet_id
+        description: "Unique identifier for each bet."
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "ID of the user who placed the bet (foreign key to users)."
+        tests:
+          - not_null

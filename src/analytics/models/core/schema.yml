@@ -1,4 +1,22 @@
 version: 2
 
 models:
-  - name: dummy_model
+  - name: dim_users
+    description: "Real users from GB and IE, not test accounts"
+    columns:
+      - name: user_id
+        tests: [unique, not_null]
+
+  - name: dim_games
+    description: "Game dimension with name and vertical"
+
+  - name: dim_outcomes
+    description: "Possible outcomes for a bet"
+
+  - name: fact_bets
+    description: "Fact table with cleaned bets and financials in USD"
+    columns:
+      - name: bet_id
+        tests: [unique, not_null]
+      - name: wager_usd
+        description: "Wager amount converted to USD"
